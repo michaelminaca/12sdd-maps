@@ -12,3 +12,5 @@ const AppState = {
   isRecording: false,
   isSettingsOpen: false,
 };
+
+//this is a test
