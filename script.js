@@ -12,3 +12,30 @@ const AppState = {
   isRecording: false,
   isSettingsOpen: false,
 };
+
+(function () {
+  if (navigator.requestMIDIAccess)
+    navigator.requestMIDIAccess().then(onMIDISuccess, onMIDIFailure);
+})();
+
+function onMIDISuccess(midiAccess) {
+  midiAccess.addEventListener('statechange', updateMIDIDevices);
+
+  const inputs = midiAccess.inputs;
+  inputs.forEach((input) => {
+    console.log(input);
+    input.addEventListener('midimessage', onMessage);
+  });
+}
+
+function onMIDIFailure() {
+  alert('WebMidi is not supported in this browser');
+}
+
+function updateMIDIDevices(event) {
+  console.log(event.target);
+}
+
+function onMessage(event) {
+  console.log(event);
+}
