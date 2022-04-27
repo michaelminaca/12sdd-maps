@@ -4,6 +4,10 @@
   box-sizing: border-box;
 }
 
+body {
+  overflow: hidden;
+}
+
 .toolbar {
   height: 6vh;
   background-color: #1e1e1e;
@@ -19,7 +23,7 @@
   display: grid;
   grid-template-rows: repeat(61, 1fr);
   grid-template-columns: 1fr;
-  width: 40px;
+  width: 3vw;
   height: 100%;
 }
 
@@ -27,7 +31,7 @@
   display: grid;
   grid-template-rows: repeat(61, 1fr);
   grid-template-columns: repeat(6000, 1fr);
-  flex: 1;
+  width: 96vw;
   height: 100%;
   background-color: #3e3e42;
 }
@@ -65,11 +69,9 @@
 
 .playhead {
   position: absolute;
-  left: 40px;
+  left: 3vw;
   fill: white;
   stroke-width: 0px;
-  width: 20px;
-  height: 90vh;
   transform: translateX(0px);
 }
 
@@ -87,4 +89,9 @@
   left: 9-px;
   height: 93vh;
   position: absolute;
+}
+
+.right-border {
+  width: 1vw;
+  background-color: blue;
 }

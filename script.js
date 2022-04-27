@@ -53,10 +53,10 @@ class Note {
 //   console.log('event');
 // }
 
-//Set
+//Set Playhead Position
 workspace.addEventListener('click', (event) => {
-  playhead.style.transform = `translateX(${
-    (event.clientX - 40) * (100 / document.documentElement.clientWidth)
-  }vw)`;
-  console.log(playhead.style.transform);
+  const vw = event.clientX * (100 / document.documentElement.clientWidth) - 3;
+  playhead.style.transform = `translateX(${vw}vw)`;
+  playheadPos = Math.trunc(vw * 365);
+  console.log(playheadPos);
 });
