@@ -72,6 +72,32 @@ const calcPlayheadPosition = function (mouseX) {
   return Math.round(96 * 62.5);
 };
 
+const stopPlayback = function () {
+  AppState.isPlaying = false;
+  playbackQueue.forEach((timer) => clearTimeout(timer));
+  playbackQueue.splice(0, playbackQueue.length());
+};
+
+const startPlayback = function () {
+  AppState.isPlaying = true;
+  notes.forEach((note) => {
+    if (note.time > playheadPos)
+      playbackQueue.push(
+        setTimeout(function () {
+          playNote(note);
+        }, (note.duration - playheadPos) * 10)
+      );
+  });
+};
+
+const playNote = function (note) {
+  // Tone.js
+};
+
 workspace.addEventListener('click', (event) => {
   setPlayheadPosition(event.clientX);
+});
+
+btnPlayPause.addEventListener('click', (event) => {
+  AppState.isPlaying ? stopPlayback() : startPlayback();
 });
