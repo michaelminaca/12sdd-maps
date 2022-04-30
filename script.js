@@ -1,6 +1,9 @@
 'use strict';
 
-//
+// Buttons
+const btnPlayPause = document.querySelector('.play-pause-btn');
+const btnRecording = document.querySelector('.record-btn');
+const btnSettings = document.querySelector('.settings-btn');
 
 //Timeline
 const playhead = document.querySelector('.playhead');
@@ -8,17 +11,11 @@ const playheadHead = document.querySelector('.playhead-head');
 
 //Workspace
 const workspace = document.querySelector('.workspace');
-const referenceNoteColumn = document.querySelector('.reference-note-column');
-const btnPlayPause = document.querySelector('.play-pause-btn');
-const btnRecording = document.querySelector('.record-btn');
-const btnSettings = document.querySelector('.settings-btn');
 const settingsMenu = document.querySelector('.settings-menu');
-
-
 
 const notes = [];
 const playbackQueue = [];
-let playheadPos;
+let playheadPos = 0;
 
 const AppState = {
   isPlaying: false,
@@ -60,19 +57,21 @@ class Note {
 //   console.log('event');
 // }
 
-//Set Playhead Position
+const setPlayheadPosition = function (mouseX) {
+  playheadPos = calcPlayheadPosition(mouseX);
+  playhead.style.transform = `translateX(${playheadPos / 62.5}vw)`;
+};
+
+const calcPlayheadPosition = function (mouseX) {
+  const vw = (mouseX * 100) / document.documentElement.clientWidth - 3;
+  if (vw >= 0 && vw <= 96)
+    return Math.round(
+      ((mouseX * 100) / document.documentElement.clientWidth - 3) * 62.5
+    );
+  if (vw < 0) return 0;
+  return Math.round(96 * 62.5);
+};
+
 workspace.addEventListener('click', (event) => {
-  const vw = ((event.clientX * 100) / document.documentElement.clientWidth)-3;
-  playheadPos = Math.round(vw * 62.5);
-  playhead.style.transform = `translateX(${playheadPos/62.5}vw)`;
-  console.log(playheadPos);
+  setPlayheadPosition(event.clientX);
 });
-
-playheadHead.addEventListener('drag', (event) => {
-  const vw = ((event.clientX * 100) / document.documentElement.clientWidth)-3;
-  playheadPos = Math.round(vw * 62.5);
-  playhead.style.transform = `translateX(${playheadPos/62.5}vw)`;
-  console.log(playheadPos);
-});
-
-
