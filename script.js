@@ -73,21 +73,26 @@ const calcPlayheadPosition = function (mouseX) {
 };
 
 const stopPlayback = function () {
-  AppState.isPlaying = false;
-  playbackQueue.forEach((timer) => clearTimeout(timer));
-  playbackQueue.splice(0, playbackQueue.length());
+  // AppState.isPlaying = false;
+  // playbackQueue.forEach((timer) => clearTimeout(timer));
+  // playbackQueue.splice(0, playbackQueue.length());
 };
 
 const startPlayback = function () {
   AppState.isPlaying = true;
-  notes.forEach((note) => {
-    if (note.time > playheadPos)
-      playbackQueue.push(
-        setTimeout(function () {
-          playNote(note);
-        }, (note.duration - playheadPos) * 10)
-      );
-  });
+  const anim = setInterval(function () {
+    playhead.style.transformplayhead.style.transform = `translateX(${
+      playheadPos / 62.5
+    }vw)`;
+  }, 10);
+  // notes.forEach((note) => {
+  //   if (note.time > playheadPos)
+  //     playbackQueue.push(
+  //       setTimeout(function () {
+  //         playNote(note);
+  //       }, (note.duration - playheadPos) * 10)
+  //     );
+  // });
 };
 
 const playNote = function (note) {
