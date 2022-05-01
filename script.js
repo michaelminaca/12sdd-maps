@@ -16,6 +16,10 @@ const settingsMenu = document.querySelector('.settings-menu');
 const notes = [];
 const playbackQueue = [];
 let playheadPos = 0;
+let playbackInterval = null;
+
+const workspaceWidth = 96;
+const unitsPerVW = 62.5;
 
 const AppState = {
   isPlaying: false,
@@ -57,6 +61,14 @@ class Note {
 //   console.log('event');
 // }
 
+const keypressHandler = function (event) {
+  if (event.keyCode === 32) playbackHandler();
+};
+
+const playbackHandler = function () {
+  AppState.isPlaying ? stopPlayback() : startPlayback();
+};
+
 const setPlayheadPosition = function (mouseX) {
   playheadPos = calcPlayheadPosition(mouseX);
   playhead.style.transform = `translateX(${playheadPos / 62.5}vw)`;
@@ -64,45 +76,45 @@ const setPlayheadPosition = function (mouseX) {
 
 const calcPlayheadPosition = function (mouseX) {
   const vw = (mouseX * 100) / document.documentElement.clientWidth - 3;
-  if (vw >= 0 && vw <= 96)
+  if (vw >= 0 && vw <= workspaceWidth)
     return Math.round(
-      ((mouseX * 100) / document.documentElement.clientWidth - 3) * 62.5
+      ((mouseX * 100) / document.documentElement.clientWidth - 3) * unitsPerVW
     );
   if (vw < 0) return 0;
-  return Math.round(96 * 62.5);
+  return Math.round(workspaceWidth * unitsPerVW);
+};
+
+const calcPlayheadPlaybackPosition = function (headPos) {
+  if (headPos >= 0 && headPos < 6000) return headPos++;
+  return 0;
 };
 
 const stopPlayback = function () {
-  // AppState.isPlaying = false;
-  // playbackQueue.forEach((timer) => clearTimeout(timer));
-  // playbackQueue.splice(0, playbackQueue.length());
+  clearInterval(playbackInterval);
+  AppState.isPlaying = false;
 };
 
 const startPlayback = function () {
   AppState.isPlaying = true;
-  const anim = setInterval(function () {
-    playhead.style.transformplayhead.style.transform = `translateX(${
-      playheadPos / 62.5
-    }vw)`;
+  playbackInterval = setInterval(function () {
+    playheadPos = playheadPos < 6000 ? (playheadPos += 1) : 0;
+    playhead.style.transform = `translateX(${playheadPos / 62.5}vw)`;
   }, 10);
-  // notes.forEach((note) => {
-  //   if (note.time > playheadPos)
-  //     playbackQueue.push(
-  //       setTimeout(function () {
-  //         playNote(note);
-  //       }, (note.duration - playheadPos) * 10)
-  //     );
-  // });
 };
 
 const playNote = function (note) {
   // Tone.js
 };
 
+document.addEventListener('keydown', (event) => {
+  keypressHandler(event);
+});
+
 workspace.addEventListener('click', (event) => {
-  setPlayheadPosition(event.clientX);
+  if (!AppState.isPlaying) setPlayheadPosition(event.clientX);
 });
 
 btnPlayPause.addEventListener('click', (event) => {
-  AppState.isPlaying ? stopPlayback() : startPlayback();
+  btnPlayPause.blur();
+  playbackHandler();
 });

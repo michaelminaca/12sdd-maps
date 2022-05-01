@@ -85,7 +85,7 @@ body {
 
 .playhead-tail {
   border-left: 1px solid white;
-  left: 9-px;
+  left: 1px;
   height: 93vh;
   position: absolute;
 }
