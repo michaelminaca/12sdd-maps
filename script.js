@@ -68,7 +68,12 @@ const playbackHandler = function () {
 };
 
 const recordHandler = function () {
-  return !AppState.isRecording ? startRecording() : stopRecording();
+  if (!AppState.isRecording && AppState.isPlaying) {
+    clearInterval(playbackInterval);
+    return startRecording();
+  }
+  if (!AppState.isRecording && !AppState.isPlaying) return startRecording();
+  return stopRecording();
 };
 
 const setPlayheadPosition = function (mouseX) {
@@ -84,11 +89,6 @@ const calcPlayheadPosition = function (mouseX) {
     );
   if (vw < 0) return 0;
   return Math.round(workspaceWidth * unitsPerVW);
-};
-
-const calcPlayheadPlaybackPosition = function (headPos) {
-  if (headPos >= 0 && headPos < 6000) return headPos++;
-  return 0;
 };
 
 const movePlayhead = function () {
@@ -134,12 +134,12 @@ workspace.addEventListener('click', (event) => {
     setPlayheadPosition(event.clientX);
 });
 
-btnPlayPause.addEventListener('click', (event) => {
+btnPlayPause.addEventListener('click', () => {
   btnPlayPause.blur();
   playbackHandler();
 });
 
-btnRecord.addEventListener('click', (event) => {
+btnRecord.addEventListener('click', () => {
   btnRecord.blur();
   recordHandler();
 });
