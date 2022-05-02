@@ -1,18 +1,14 @@
 'use strict';
-import * as Tone from 'tone';
 
 // Buttons
 const btnPlayPause = document.querySelector('.play-pause-btn');
 const btnRecord = document.querySelector('.record-btn');
-const btnSettings = document.querySelector('.settings-btn');
 
 //Timeline
 const playhead = document.querySelector('.playhead');
-const playheadHead = document.querySelector('.playhead-head');
 
 //Workspace
 const workspace = document.querySelector('.workspace');
-const settingsMenu = document.querySelector('.settings-menu');
 
 const notes = [];
 const playbackQueue = [];
