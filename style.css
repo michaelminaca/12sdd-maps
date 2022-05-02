@@ -85,7 +85,6 @@ body {
 
 .playhead-tail {
   border-left: 1px solid white;
-  left: 1px;
   height: 93vh;
   position: absolute;
 }
@@ -93,4 +92,8 @@ body {
 .right-border {
   width: 1vw;
   background-color: blue;
+}
+
+.recording {
+  background-color: red;
 }

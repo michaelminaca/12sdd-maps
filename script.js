@@ -2,7 +2,7 @@
 
 // Buttons
 const btnPlayPause = document.querySelector('.play-pause-btn');
-const btnRecording = document.querySelector('.record-btn');
+const btnRecord = document.querySelector('.record-btn');
 const btnSettings = document.querySelector('.settings-btn');
 
 //Timeline
@@ -62,11 +62,16 @@ class Note {
 // }
 
 const keypressHandler = function (event) {
-  if (event.keyCode === 32) playbackHandler();
+  if (event.keyCode === 32) return playbackHandler();
 };
 
 const playbackHandler = function () {
-  AppState.isPlaying ? stopPlayback() : startPlayback();
+  if (!AppState.isPlaying && !AppState.isRecording) return startPlayback();
+  if (AppState.isPlaying && !AppState.isRecording) return stopPlayback();
+};
+
+const recordHandler = function () {
+  return !AppState.isRecording ? startRecording() : stopRecording();
 };
 
 const setPlayheadPosition = function (mouseX) {
@@ -89,17 +94,34 @@ const calcPlayheadPlaybackPosition = function (headPos) {
   return 0;
 };
 
-const stopPlayback = function () {
-  clearInterval(playbackInterval);
-  AppState.isPlaying = false;
-};
-
-const startPlayback = function () {
-  AppState.isPlaying = true;
+const movePlayhead = function () {
   playbackInterval = setInterval(function () {
     playheadPos = playheadPos < 6000 ? (playheadPos += 1) : 0;
     playhead.style.transform = `translateX(${playheadPos / 62.5}vw)`;
   }, 10);
+};
+
+const startPlayback = function () {
+  AppState.isPlaying = true;
+  movePlayhead();
+};
+
+const stopPlayback = function () {
+  AppState.isPlaying = false;
+  clearInterval(playbackInterval);
+};
+
+const startRecording = function () {
+  AppState.isPlaying = false;
+  AppState.isRecording = true;
+  btnRecord.classList.add('recording');
+  movePlayhead();
+};
+
+const stopRecording = function () {
+  AppState.isRecording = false;
+  btnRecord.classList.remove('recording');
+  clearInterval(playbackInterval);
 };
 
 const playNote = function (note) {
@@ -111,10 +133,16 @@ document.addEventListener('keydown', (event) => {
 });
 
 workspace.addEventListener('click', (event) => {
-  if (!AppState.isPlaying) setPlayheadPosition(event.clientX);
+  if (!AppState.isPlaying && !AppState.isRecording)
+    setPlayheadPosition(event.clientX);
 });
 
 btnPlayPause.addEventListener('click', (event) => {
   btnPlayPause.blur();
   playbackHandler();
+});
+
+btnRecord.addEventListener('click', (event) => {
+  btnRecord.blur();
+  recordHandler();
 });
