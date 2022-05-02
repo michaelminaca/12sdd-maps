@@ -1,4 +1,5 @@
 'use strict';
+import * as Tone from 'tone';
 
 // Buttons
 const btnPlayPause = document.querySelector('.play-pause-btn');
