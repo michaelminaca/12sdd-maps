@@ -1,13 +1,8 @@
 'use strict';
 
-// Buttons
 const btnPlayPause = document.querySelector('.play-pause-btn');
 const btnRecord = document.querySelector('.record-btn');
-
-//Timeline
 const playhead = document.querySelector('.playhead');
-
-//Workspace
 const workspace = document.querySelector('.workspace');
 
 const notes = [];
@@ -24,11 +19,11 @@ const AppState = {
 };
 
 class Note {
-  constructor(note, velocity, time, duration) {
+  constructor(note, velocity, startTime, endTime) {
     this.note = note;
     this.velocity = velocity;
-    this.time = time;
-    this.duration = duration;
+    this.startTime = startTime;
+    this.endTime = endTime;
   }
 }
 
@@ -122,7 +117,7 @@ const stopRecording = function () {
 };
 
 const playNote = function (note) {
-  // Tone.js
+  //   Tone.js
 };
 
 document.addEventListener('keydown', (event) => {
