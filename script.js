@@ -27,32 +27,6 @@ class Note {
   }
 }
 
-// (function () {
-//   navigator.requestMIDIAccess
-//     ? navigator.requestMIDIAccess().then(onMIDISuccess, onMIDIFailure)
-//     : alert('WebMidi is not supported in this browser');
-// })();
-
-// function onMIDISuccess(midiAccess) {
-//   midiAccess.addEventListener('statechange', (event) =>
-//     updateMIDIDevices(event.target)
-//   );
-//   const inputs = midiAccess.inputs;
-//   inputs.forEach((input) =>
-//     input.addEventListener('midimessage', () => console.log('midimessage'))
-//   );
-// }
-
-// function onMIDIFailure() {
-//   alert('Failed to connect to midi');
-// }
-
-// function updateMIDIDevices(midiAccess) {}
-
-// function onMIDIMessage(event) {
-//   console.log('event');
-// }
-
 const keypressHandler = function (event) {
   if (event.keyCode === 32) return playbackHandler();
 };
@@ -138,3 +112,29 @@ btnRecord.addEventListener('click', () => {
   btnRecord.blur();
   recordHandler();
 });
+
+// (function () {
+//   navigator.requestMIDIAccess
+//     ? navigator.requestMIDIAccess().then(onMIDISuccess, onMIDIFailure)
+//     : alert('WebMidi is not supported in this browser');
+// })();
+
+// function onMIDISuccess(midiAccess) {
+//   midiAccess.addEventListener('statechange', (event) =>
+//     updateMIDIDevices(event.target)
+//   );
+//   const inputs = midiAccess.inputs;
+//   inputs.forEach((input) =>
+//     input.addEventListener('midimessage', () => console.log('midimessage'))
+//   );
+// }
+
+// function onMIDIFailure() {
+//   alert('Failed to connect to midi');
+// }
+
+// function updateMIDIDevices(midiAccess) {}
+
+// function onMIDIMessage(event) {
+//   console.log('event');
+// }
