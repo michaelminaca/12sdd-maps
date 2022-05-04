@@ -38,6 +38,7 @@ const playbackHandler = function () {
 
 const recordHandler = function () {
   if (!AppState.isRecording && AppState.isPlaying) {
+    console.log(playbackInterval);
     clearInterval(playbackInterval);
     return startRecording();
   }
