@@ -73,7 +73,11 @@ function updateMIDIDevices(midiAccess) {
 function onMIDIMessage(event) {
   if (AppState.isRecording && event.data[0] === 144) {
     notes.push(new Note(event.data[1], event.data[2], playheadPos));
-    console.log(notes);
+    notes.sort((a, b) => {
+      if (a.startTime < b.startTime) return -1;
+      if (a.startTime > b.startTime) return 1;
+      return 0;
+    });
     return;
   }
   if (AppState.isRecording && event.data[0] === 128) {
