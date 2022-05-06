@@ -27,6 +27,12 @@ class Note {
   }
 }
 
+(function () {
+  navigator.requestMIDIAccess
+    ? navigator.requestMIDIAccess().then(onMIDISuccess, onMIDIFailure)
+    : alert('WebMidi is not supported in this browser');
+})();
+
 const keypressHandler = function (event) {
   if (event.keyCode === 32) return playbackHandler();
 };
@@ -45,6 +51,41 @@ const recordHandler = function () {
   if (!AppState.isRecording && !AppState.isPlaying) return startRecording();
   return stopRecording();
 };
+
+function onMIDISuccess(midiAccess) {
+  midiAccess.addEventListener('statechange', (event) =>
+    updateMIDIDevices(event.target)
+  );
+  updateMIDIDevices(midiAccess);
+}
+
+function onMIDIFailure() {
+  alert('Failed to connect to midi');
+}
+
+function updateMIDIDevices(midiAccess) {
+  const inputs = midiAccess.inputs;
+  inputs.forEach((input) =>
+    input.addEventListener('midimessage', onMIDIMessage)
+  );
+}
+
+function onMIDIMessage(event) {
+  if (AppState.isRecording && event.data[0] === 144) {
+    notes.push(new Note(event.data[1], event.data[2], playheadPos));
+    console.log(notes);
+    return;
+  }
+  if (AppState.isRecording && event.data[0] === 128) {
+    notes.forEach((note) => {
+      if (note.note === event.data[1] && note.endTime == null) {
+        note.endTime = playheadPos;
+        console.log(notes);
+        return;
+      }
+    });
+  }
+}
 
 const setPlayheadPosition = function (mouseX) {
   playheadPos = calcPlayheadPosition(mouseX);
@@ -76,6 +117,9 @@ const startPlayback = function () {
 const stopPlayback = function () {
   AppState.isPlaying = false;
   clearInterval(playbackInterval);
+  playbackQueue.forEach((time) => {
+    clearTimeout(time);
+  });
 };
 
 const startRecording = function () {
@@ -92,7 +136,7 @@ const stopRecording = function () {
 };
 
 const playNote = function (note) {
-  //   Tone.js
+  // Tone.js
 };
 
 document.addEventListener('keydown', (event) => {
@@ -113,29 +157,3 @@ btnRecord.addEventListener('click', () => {
   btnRecord.blur();
   recordHandler();
 });
-
-// (function () {
-//   navigator.requestMIDIAccess
-//     ? navigator.requestMIDIAccess().then(onMIDISuccess, onMIDIFailure)
-//     : alert('WebMidi is not supported in this browser');
-// })();
-
-// function onMIDISuccess(midiAccess) {
-//   midiAccess.addEventListener('statechange', (event) =>
-//     updateMIDIDevices(event.target)
-//   );
-//   const inputs = midiAccess.inputs;
-//   inputs.forEach((input) =>
-//     input.addEventListener('midimessage', () => console.log('midimessage'))
-//   );
-// }
-
-// function onMIDIFailure() {
-//   alert('Failed to connect to midi');
-// }
-
-// function updateMIDIDevices(midiAccess) {}
-
-// function onMIDIMessage(event) {
-//   console.log('event');
-// }
