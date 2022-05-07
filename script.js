@@ -10,8 +10,8 @@ const playbackQueue = [];
 let playheadPos = 0;
 let playbackInterval = null;
 
-const workspaceWidth = 96;
-const unitsPerVW = 62.5;
+const WORKSPACE_WIDTH = 96;
+const UNITS_PER_VW = 62.5;
 
 const AppState = {
   isPlaying: false,
@@ -98,12 +98,12 @@ const setPlayheadPosition = function (mouseX) {
 
 const calcPlayheadPosition = function (mouseX) {
   const vw = (mouseX * 100) / document.documentElement.clientWidth - 3;
-  if (vw >= 0 && vw <= workspaceWidth)
+  if (vw >= 0 && vw <= WORKSPACE_WIDTH)
     return Math.round(
-      ((mouseX * 100) / document.documentElement.clientWidth - 3) * unitsPerVW
+      ((mouseX * 100) / document.documentElement.clientWidth - 3) * UNITS_PER_VW
     );
   if (vw < 0) return 0;
-  return Math.round(workspaceWidth * unitsPerVW);
+  return Math.round(WORKSPACE_WIDTH * UNITS_PER_VW);
 };
 
 const movePlayhead = function () {
