@@ -139,9 +139,7 @@ const stopRecording = function () {
   clearInterval(playbackInterval);
 };
 
-const playNote = function (note) {
-  // Tone.js
-};
+const playNote = function (note) {};
 
 document.addEventListener('keydown', (event) => {
   keypressHandler(event);
