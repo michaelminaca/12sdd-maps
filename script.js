@@ -102,11 +102,13 @@ const toggleNote = function (midiNoteData) {
   }
 };
 
-const drawNote = function (midiNoteData) {
-  const note = document.createElement('div');
-  note.classList.add('note');
-  note.style.width = `${(midiNoteData[3] - midiNoteData[2]) / UNITS_PER_VW}vw`;
-  workspace.appendChild(note);
+const drawNote = function (note) {
+  const htmlNote = document.createElement('div');
+  htmlNote.classList.add('recorded-note');
+  htmlNote.style.top = `${9}vh`;
+  htmlNote.style.width = `${(note.endTime - note.startTime) / UNITS_PER_VW}vw`;
+  htmlNote.style.left = `${note.startTime / UNITS_PER_VW + 3}vw`;
+  workspace.appendChild(htmlNote);
 };
 
 const addNoteToArray = function (midiNoteData) {
@@ -123,7 +125,7 @@ const addNoteToArray = function (midiNoteData) {
     notes.forEach((note) => {
       if (note.note === midiNoteData[1] && note.endTime == null) {
         note.endTime = playheadPos;
-        drawNote(midiNoteData);
+        drawNote(note);
         return;
       }
     });
@@ -198,7 +200,7 @@ const stopRecording = function () {
 const playNote = function (note) {
   sampler.triggerAttack(
     midiToNoteConversion(note.note),
-    '0',
+    0,
     note.velocity / 128
   );
   setTimeout(() => {
