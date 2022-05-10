@@ -89,9 +89,12 @@ const onMIDIMessage = function (event) {
 
 const toggleNote = function (midiNoteData) {
   if (midiNoteData[0] === 144) {
+    console.log(midiNoteData[1]);
+    sampler.triggerAttack(midiToNoteConversion(midiNoteData[1]));
     return;
   }
   if (midiNoteData[0] === 128) {
+    sampler.triggerRelease(midiToNoteConversion(midiNoteData[1]));
     return;
   }
 };
@@ -110,7 +113,6 @@ const addNoteToArray = function (midiNoteData) {
     notes.forEach((note) => {
       if (note.note === midiNoteData[1] && note.endTime == null) {
         note.endTime = playheadPos;
-        console.log(notes);
         return;
       }
     });
@@ -132,19 +134,37 @@ const calcPlayheadPosition = function (mouseX) {
   return Math.round(WORKSPACE_WIDTH * UNITS_PER_VW);
 };
 
-const movePlayhead = function () {
-  notes.forEach((note) => {
-    if (note.startTime > playheadPos) {
-      playbackQueue.push(
-        setTimeout(playNote(note), note.startTime - playheadPos)
-      );
-    }
-  });
+// const movePlayhead = function () {
+//   notes.forEach((note) => {
+//     if (note.startTime > playheadPos) {
+//       playbackQueue.push(
+//         setTimeout(function() {
+//           playNote(note)
+//         }, 10 * (note.startTime - playheadPos)
+//         );
+//       )
+//     }
+//   );
+// }
 
+const movePlayhead = function () {
+  setNoteTimeouts();
   playbackInterval = setInterval(function () {
     playheadPos = playheadPos < 6000 ? (playheadPos += 1) : 0;
     playhead.style.transform = `translateX(${playheadPos / 62.5}vw)`;
   }, 10);
+};
+
+const setNoteTimeouts = function () {
+  notes.forEach((note) => {
+    if (note.startTime > playheadPos) {
+      playbackQueue.push(
+        setTimeout(function () {
+          playNote(note);
+        }, 10 * (note.startTime - playheadPos))
+      );
+    }
+  });
 };
 
 const stopMovingPlayhead = function () {
@@ -178,7 +198,32 @@ const stopRecording = function () {
 };
 
 const playNote = function (note) {
-  sampler.triggerAttackRelease(note.note, note.endTime - note.startTime);
+  sampler.triggerAttack(midiToNoteConversion(note.note));
+  setTimeout(() => {
+    sampler.triggerRelease(midiToNoteConversion(note.note));
+  }, (note.endTime - note.startTime) * 10);
+};
+
+const midiToNoteConversion = function (midi) {
+  const CHROMATIC = [
+    'C',
+    'Db',
+    'D',
+    'Eb',
+    'E',
+    'F',
+    'Gb',
+    'G',
+    'Ab',
+    'A',
+    'Bb',
+    'B',
+  ];
+
+  if (isNaN(midi) || midi < 0 || midi > 127) return null;
+  const name = CHROMATIC[midi % 12];
+  const oct = Math.floor(midi / 12) - 1;
+  return name + oct;
 };
 
 document.addEventListener('keydown', (event) => {
