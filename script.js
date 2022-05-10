@@ -89,7 +89,6 @@ const onMIDIMessage = function (event) {
 
 const toggleNote = function (midiNoteData) {
   if (midiNoteData[0] === 144) {
-    console.log(midiNoteData[1]);
     sampler.triggerAttack(midiToNoteConversion(midiNoteData[1]));
     return;
   }
@@ -133,19 +132,6 @@ const calcPlayheadPosition = function (mouseX) {
   if (vw < 0) return 0;
   return Math.round(WORKSPACE_WIDTH * UNITS_PER_VW);
 };
-
-// const movePlayhead = function () {
-//   notes.forEach((note) => {
-//     if (note.startTime > playheadPos) {
-//       playbackQueue.push(
-//         setTimeout(function() {
-//           playNote(note)
-//         }, 10 * (note.startTime - playheadPos)
-//         );
-//       )
-//     }
-//   );
-// }
 
 const movePlayhead = function () {
   setNoteTimeouts();
