@@ -55,7 +55,6 @@ const playbackHandler = function () {
 
 const recordHandler = function () {
   if (!AppState.isRecording && AppState.isPlaying) {
-    console.log(playbackInterval);
     clearInterval(playbackInterval);
     return startRecording();
   }
@@ -134,10 +133,25 @@ const calcPlayheadPosition = function (mouseX) {
 };
 
 const movePlayhead = function () {
+  notes.forEach((note) => {
+    if (note.startTime > playheadPos) {
+      playbackQueue.push(
+        setTimeout(playNote(note), note.startTime - playheadPos)
+      );
+    }
+  });
+
   playbackInterval = setInterval(function () {
     playheadPos = playheadPos < 6000 ? (playheadPos += 1) : 0;
     playhead.style.transform = `translateX(${playheadPos / 62.5}vw)`;
   }, 10);
+};
+
+const stopMovingPlayhead = function () {
+  clearInterval(playbackInterval);
+  playbackQueue.forEach((timeout) => {
+    clearTimeout(timeout);
+  });
 };
 
 const startPlayback = function () {
@@ -147,10 +161,7 @@ const startPlayback = function () {
 
 const stopPlayback = function () {
   AppState.isPlaying = false;
-  clearInterval(playbackInterval);
-  playbackQueue.forEach((time) => {
-    clearTimeout(time);
-  });
+  stopMovingPlayhead();
 };
 
 const startRecording = function () {
@@ -163,7 +174,7 @@ const startRecording = function () {
 const stopRecording = function () {
   AppState.isRecording = false;
   btnRecord.classList.remove('recording');
-  clearInterval(playbackInterval);
+  stopMovingPlayhead();
 };
 
 const playNote = function (note) {
