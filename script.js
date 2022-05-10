@@ -89,13 +89,24 @@ const onMIDIMessage = function (event) {
 
 const toggleNote = function (midiNoteData) {
   if (midiNoteData[0] === 144) {
-    sampler.triggerAttack(midiToNoteConversion(midiNoteData[1]));
+    sampler.triggerAttack(
+      midiToNoteConversion(midiNoteData[1]),
+      '0',
+      midiNoteData[2] / 128
+    );
     return;
   }
   if (midiNoteData[0] === 128) {
     sampler.triggerRelease(midiToNoteConversion(midiNoteData[1]));
     return;
   }
+};
+
+const drawNote = function (midiNoteData) {
+  const note = document.createElement('div');
+  note.classList.add('note');
+  note.style.width = `${(midiNoteData[3] - midiNoteData[2]) / UNITS_PER_VW}vw`;
+  workspace.appendChild(note);
 };
 
 const addNoteToArray = function (midiNoteData) {
@@ -112,6 +123,7 @@ const addNoteToArray = function (midiNoteData) {
     notes.forEach((note) => {
       if (note.note === midiNoteData[1] && note.endTime == null) {
         note.endTime = playheadPos;
+        drawNote(midiNoteData);
         return;
       }
     });
@@ -184,7 +196,11 @@ const stopRecording = function () {
 };
 
 const playNote = function (note) {
-  sampler.triggerAttack(midiToNoteConversion(note.note));
+  sampler.triggerAttack(
+    midiToNoteConversion(note.note),
+    '0',
+    note.velocity / 128
+  );
   setTimeout(() => {
     sampler.triggerRelease(midiToNoteConversion(note.note));
   }, (note.endTime - note.startTime) * 10);

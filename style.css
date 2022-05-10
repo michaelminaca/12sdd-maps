@@ -99,3 +99,9 @@ body {
 .recording {
   background-color: red;
 }
+
+.note {
+  position: absolute;
+  background-color: white;
+  height: 1.475409836065574vh;
+}
