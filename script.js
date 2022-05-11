@@ -11,9 +11,9 @@ let playheadPos = 0;
 let playbackInterval = null;
 
 const WORKSPACE_WIDTH = 96;
-const UNITS_PER_VW = 62.5;
-const TOTAL_UNITS = 6000;
+const TOTAL_UNITS = 1000;
 const MS_PER_UNIT = 10;
+const UNITS_PER_VW = TOTAL_UNITS / WORKSPACE_WIDTH;
 
 const AppState = {
   isPlaying: false,
@@ -83,9 +83,11 @@ function updateMIDIDevices(midiAccess) {
 }
 
 const onMIDIMessage = function (event) {
-  toggleNote(event.data);
-  if (AppState.isRecording) {
-    addNoteToArray(event.data);
+  if (event.data[1] >= 36 && event.data[1] <= 96) {
+    toggleNote(event.data);
+    if (AppState.isRecording) {
+      addNoteToArray(event.data);
+    }
   }
 };
 
@@ -107,7 +109,7 @@ const toggleNote = function (midiNoteData) {
 const drawNote = function (note) {
   const htmlNote = document.createElement('div');
   htmlNote.classList.add('recorded-note');
-  htmlNote.style.top = `${9}vh`;
+  htmlNote.style.top = `${9 + (90 / 61) * Math.abs(note.note - 96)}vh`;
   htmlNote.style.width = `${(note.endTime - note.startTime) / UNITS_PER_VW}vw`;
   htmlNote.style.left = `${note.startTime / UNITS_PER_VW + 3}vw`;
   workspace.appendChild(htmlNote);
@@ -136,7 +138,7 @@ const addNoteToArray = function (midiNoteData) {
 
 const setPlayheadPosition = function (mouseX) {
   playheadPos = calcPlayheadPosition(mouseX);
-  playhead.style.transform = `translateX(${playheadPos / 62.5}vw)`;
+  playhead.style.transform = `translateX(${playheadPos / UNITS_PER_VW}vw)`;
 };
 
 const calcPlayheadPosition = function (mouseX) {
@@ -152,7 +154,18 @@ const calcPlayheadPosition = function (mouseX) {
 const movePlayhead = function () {
   setNoteTimeouts();
   playbackInterval = setInterval(function () {
-    playheadPos = playheadPos < TOTAL_UNITS ? (playheadPos += 1) : 0;
+    if (playheadPos < TOTAL_UNITS) {
+      playheadPos += 1;
+    }
+    if (playheadPos >= TOTAL_UNITS) {
+      playheadPos = 0;
+      notes.forEach((note) => {
+        if (note.endTime == undefined) {
+          note.endTime = TOTAL_UNITS;
+          drawNote(note);
+        }
+      });
+    }
     playhead.style.transform = `translateX(${playheadPos / UNITS_PER_VW}vw)`;
   }, 10);
 };
