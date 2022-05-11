@@ -12,6 +12,8 @@ let playbackInterval = null;
 
 const WORKSPACE_WIDTH = 96;
 const UNITS_PER_VW = 62.5;
+const TOTAL_UNITS = 6000;
+const MS_PER_UNIT = 10;
 
 const AppState = {
   isPlaying: false,
@@ -150,8 +152,8 @@ const calcPlayheadPosition = function (mouseX) {
 const movePlayhead = function () {
   setNoteTimeouts();
   playbackInterval = setInterval(function () {
-    playheadPos = playheadPos < 6000 ? (playheadPos += 1) : 0;
-    playhead.style.transform = `translateX(${playheadPos / 62.5}vw)`;
+    playheadPos = playheadPos < TOTAL_UNITS ? (playheadPos += 1) : 0;
+    playhead.style.transform = `translateX(${playheadPos / UNITS_PER_VW}vw)`;
   }, 10);
 };
 
@@ -161,7 +163,7 @@ const setNoteTimeouts = function () {
       playbackQueue.push(
         setTimeout(function () {
           playNote(note);
-        }, 10 * (note.startTime - playheadPos))
+        }, MS_PER_UNIT * (note.startTime - playheadPos))
       );
     }
   });
@@ -205,7 +207,7 @@ const playNote = function (note) {
   );
   setTimeout(() => {
     sampler.triggerRelease(midiToNoteConversion(note.note));
-  }, (note.endTime - note.startTime) * 10);
+  }, (note.endTime - note.startTime) * MS_PER_UNIT);
 };
 
 const midiToNoteConversion = function (midi) {
