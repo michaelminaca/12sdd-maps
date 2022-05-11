@@ -112,6 +112,7 @@ const drawNote = function (note) {
   htmlNote.style.top = `${9 + (90 / 61) * Math.abs(note.note - 96)}vh`;
   htmlNote.style.width = `${(note.endTime - note.startTime) / UNITS_PER_VW}vw`;
   htmlNote.style.left = `${note.startTime / UNITS_PER_VW + 3}vw`;
+  htmlNote.dataset.arrayPos = notes.indexOf(note);
   workspace.appendChild(htmlNote);
 };
 
