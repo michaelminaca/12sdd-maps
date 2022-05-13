@@ -69,7 +69,7 @@ function onMIDISuccess(midiAccess) {
     updateMIDIDevices(event.target)
   );
   updateMIDIDevices(midiAccess);
-  audioSource.start(0);
+  Tone.context.state === 'running';
 }
 
 function onMIDIFailure() {
@@ -84,6 +84,7 @@ function updateMIDIDevices(midiAccess) {
 }
 
 const onMIDIMessage = function (event) {
+  updateAudioContext();
   if (event.data[1] >= 36 && event.data[1] <= 96) {
     toggleNote(event.data);
     if (AppState.isRecording) {
@@ -247,21 +248,31 @@ const midiToNoteConversion = function (midi) {
   return name + oct;
 };
 
+const updateAudioContext = function () {
+  if (Tone.context.state !== 'running') {
+    Tone.context.resume();
+  }
+};
+
 document.addEventListener('keydown', (event) => {
+  updateAudioContext();
   keypressHandler(event);
 });
 
 workspace.addEventListener('click', (event) => {
+  updateAudioContext();
   if (!AppState.isPlaying && !AppState.isRecording)
     setPlayheadPosition(event.clientX);
 });
 
 btnPlayPause.addEventListener('click', () => {
+  updateAudioContext();
   btnPlayPause.blur();
   playbackHandler();
 });
 
 btnRecord.addEventListener('click', () => {
+  updateAudioContext();
   btnRecord.blur();
   recordHandler();
 });
