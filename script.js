@@ -69,6 +69,7 @@ function onMIDISuccess(midiAccess) {
     updateMIDIDevices(event.target)
   );
   updateMIDIDevices(midiAccess);
+  audioSource.start(0);
 }
 
 function onMIDIFailure() {
