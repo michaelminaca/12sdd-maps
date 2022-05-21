@@ -8,21 +8,21 @@ class Node {
 const analyseNotes = function (notes) {
   findArpeggios(notes);
   findMotifs(notes);
+  findChords(notes);
 };
 
 const findArpeggios = function (notes) {
   const arpeggios = [];
   for (let i = 0; i < notes.length - 2; i++) {
     const isThird =
-      notes[i + 1].note - notes[i].note === 4 ||
-      notes[i + 1].note - notes[i].note === 3 ||
-      notes[i + 1].note - notes[i].note === -4 ||
-      notes[i + 1].note - notes[i].note === -3;
+      (Math.abs(notes[i + 1].note - notes[i].note) === 4 ||
+        Math.abs(notes[i + 1].note - notes[i].note) === 3) &&
+      Math.abs(notes[i + 1].startTime - notes[i].startTime) > 3;
     const isFifth =
-      notes[i + 2].note - notes[i].note == 7 ||
-      notes[i + 2].note - notes[i].note == -7;
+      Math.abs(notes[i + 2].note - notes[i].note) == 7 &&
+      Math.abs(notes[i + 2].startTime - notes[i].startTime > 3);
     if (isThird && isFifth) {
-      arpeggios.push([notes[i].id, notes[i + 1].id, notes[i + 2].id]);
+      arpeggios.push([i, i + 1, i + 2]);
       console.log(
         `Apreggio Detected at ${notes[i].id}, ${notes[i + 1].id}, ${
           notes[i + 2].id
@@ -81,6 +81,28 @@ const findMotifs = function (notes) {
         }`
       );
       k += counter;
+    }
+  }
+};
+
+const findChords = function (notes) {
+  const chords = [];
+  for (let i = 0; i < notes.length - 2; i++) {
+    const isThird =
+      (Math.abs(notes[i + 1].note - notes[i].note) === 4 ||
+        Math.abs(notes[i + 1].note - notes[i].note) === 3) &&
+      Math.abs(notes[i + 1].startTime - notes[i].startTime) < 3;
+    const isFifth =
+      Math.abs(notes[i + 2].note - notes[i].note) == 7 &&
+      Math.abs(notes[i + 2].startTime - notes[i].startTime < 3);
+    if (isThird && isFifth) {
+      chords.push([i, i + 1, i + 2]);
+      console.log(
+        `Chord Detected at ${notes[i].id}, ${notes[i + 1].id}, ${
+          notes[i + 2].id
+        }`
+      );
+      i += 2;
     }
   }
 };
