@@ -10,6 +10,8 @@ const playbackQueue = [];
 let playheadPos = 0;
 let playbackInterval = null;
 
+let id = 0;
+
 const WORKSPACE_WIDTH = 96;
 const TOTAL_UNITS = 1000;
 const MS_PER_UNIT = 10;
@@ -21,11 +23,12 @@ const AppState = {
 };
 
 class Note {
-  constructor(note, velocity, startTime, endTime) {
+  constructor(note, velocity, startTime, endTime, id) {
     this.note = note;
     this.velocity = velocity;
     this.startTime = startTime;
     this.endTime = endTime;
+    this.id = id;
   }
 }
 
@@ -69,7 +72,6 @@ function onMIDISuccess(midiAccess) {
     updateMIDIDevices(event.target)
   );
   updateMIDIDevices(midiAccess);
-  Tone.context.state === 'running';
 }
 
 function onMIDIFailure() {
@@ -84,7 +86,6 @@ function updateMIDIDevices(midiAccess) {
 }
 
 const onMIDIMessage = function (event) {
-  updateAudioContext();
   if (event.data[1] >= 36 && event.data[1] <= 96) {
     toggleNote(event.data);
     if (AppState.isRecording) {
@@ -114,13 +115,15 @@ const drawNote = function (note) {
   htmlNote.style.top = `${9 + (90 / 61) * Math.abs(note.note - 96)}vh`;
   htmlNote.style.width = `${(note.endTime - note.startTime) / UNITS_PER_VW}vw`;
   htmlNote.style.left = `${note.startTime / UNITS_PER_VW + 3}vw`;
-  htmlNote.dataset.arrayPos = notes.indexOf(note);
+  htmlNote.dataset.id = note.id;
   workspace.appendChild(htmlNote);
 };
 
 const addNoteToArray = function (midiNoteData) {
   if (midiNoteData[0] === 144) {
     notes.push(new Note(midiNoteData[1], midiNoteData[2], playheadPos));
+    notes[notes.length - 1].id = id;
+    id++;
     notes.sort((a, b) => {
       if (a.startTime < b.startTime) return -1;
       if (a.startTime > b.startTime) return 1;
@@ -213,6 +216,7 @@ const stopRecording = function () {
   AppState.isRecording = false;
   btnRecord.classList.remove('recording');
   stopMovingPlayhead();
+  analyseNotes(notes);
 };
 
 const playNote = function (note) {
@@ -248,31 +252,25 @@ const midiToNoteConversion = function (midi) {
   return name + oct;
 };
 
-const updateAudioContext = function () {
-  if (Tone.context.state !== 'running') {
-    Tone.context.resume();
-  }
-};
-
 document.addEventListener('keydown', (event) => {
-  updateAudioContext();
   keypressHandler(event);
 });
 
 workspace.addEventListener('click', (event) => {
-  updateAudioContext();
   if (!AppState.isPlaying && !AppState.isRecording)
     setPlayheadPosition(event.clientX);
 });
 
 btnPlayPause.addEventListener('click', () => {
-  updateAudioContext();
   btnPlayPause.blur();
   playbackHandler();
 });
 
 btnRecord.addEventListener('click', () => {
-  updateAudioContext();
   btnRecord.blur();
   recordHandler();
+});
+
+document.querySelector('body').addEventListener('click', async () => {
+  await Tone.start();
 });
