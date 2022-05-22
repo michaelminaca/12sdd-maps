@@ -125,17 +125,32 @@ const findDrawnNoteElements = function (analyseNotesIDs, drawnNotes) {
 };
 
 const findDimensionsOfAnalysisElement = function (analysisNoteElements) {
-  let curWidth = analysisNoteElements[0].style.width,
-    curHeight = analysisNoteElements[0].style.height,
+  let highLeft =
+      parseFloat(analysisNoteElements[0].style.left) +
+      parseFloat(analysisNoteElements[0].style.width),
+    highTop = parseFloat(analysisNoteElements[0].style.top),
     curLeft = parseFloat(analysisNoteElements[0].style.left),
     curTop = parseFloat(analysisNoteElements[0].style.top);
   for (let i = 1; i < analysisNoteElements.length; i++) {
+    console.log(highLeft);
     if (parseFloat(analysisNoteElements[i].style.top) < curTop)
       curTop = parseFloat(analysisNoteElements[i].style.top);
     if (parseFloat(analysisNoteElements[i].style.left) < curLeft)
       curLeft = parseFloat(analysisNoteElements[i].style.left);
+    if (
+      parseFloat(analysisNoteElements[i].style.left) +
+        parseFloat(analysisNoteElements[i].style.width) >
+      highLeft
+    )
+      highLeft =
+        parseFloat(analysisNoteElements[i].style.left) +
+        parseFloat(analysisNoteElements[i].style.width);
+    if (parseFloat(analysisNoteElements[i].style.top) > highTop)
+      highTop = parseFloat(analysisNoteElements[i].style.top);
   }
-  return ['10vw', '10vh', `${curLeft}vw`, `${curTop}vh`];
+  highLeft = highLeft - curLeft;
+  highTop = highTop + 90 / 61 - curTop;
+  return [`${highLeft}vw`, `${highTop}vh`, `${curLeft}vw`, `${curTop}vh`];
 };
 
 const drawAnalysis = function (analysisNotesID, title, drawnNotes) {
