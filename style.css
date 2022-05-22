@@ -16,6 +16,43 @@ p {
   user-select: none;
 }
 
+button {
+  background-color: #1f252b;
+  border: 1.5px solid #3a4750;
+  display: inline-block;
+  cursor: pointer;
+  color: #ffffff;
+  font-family: Arial;
+  font-size: 10px;
+  padding: 10px 20px;
+  text-decoration: none;
+  text-shadow: 0px 1px 0px #505050ff;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.button-container {
+  position: relative;
+  height: 100%;
+}
+
+.play-pause-btn {
+  left: 10px;
+}
+
+.record-btn {
+  left: 110px;
+}
+
+button:hover {
+  background-color: #000000;
+}
+button:active {
+  position: relative;
+  top: 51%;
+}
+
 .toolbar {
   height: 6vh;
   background-color: #1e1e1e;
@@ -39,51 +76,57 @@ p {
   /* position: relative; */
   width: 96vw;
   height: 100%;
-  background-color: #3e3e42;
+  background-color: #303841;
+  border: 1px solid #1f252b;
 }
 
 .timeline-container {
   display: flex;
   flex-direction: row;
   height: 3vh;
+  border-top: 1px solid #1f252b;
+}
+
+.top-note {
+  border-top: 1px solid #1f252b;
 }
 
 .reference-note-filler {
   width: 3vw;
   height: 100%;
-  background-color: #3e3e42;
+  background-color: #3a4750;
 }
 
 .timeline {
   flex: 1;
   height: 100%;
-  background-color: #3e3e42;
+  background-color: #3a4750;
 }
 
 .black-note {
-  background-color: black;
+  background-color: #0f1315;
 }
 
 .white-note {
-  background-color: white;
+  background-color: #eeeeee;
 }
 
 .footer {
   height: 1vh;
-  background-color: black;
+  background-color: #0a0a0aff;
 }
 
 .playhead {
   position: absolute;
   left: 3vw;
-  fill: white;
+  fill: #eeeeee;
   stroke-width: 0px;
   transform: translateX(0px);
   z-index: 1000;
 }
 
 .playhead-head {
-  background-color: white;
+  background-color: #eeeeee;
   position: absolute;
   height: 3vh;
   width: 21px;
@@ -92,7 +135,7 @@ p {
 }
 
 .playhead-tail {
-  border-left: 1px solid white;
+  border-left: 1px solid #eeeeee;
   height: 93vh;
   position: absolute;
 }
@@ -103,12 +146,13 @@ p {
 }
 
 .recording {
-  background-color: red;
+  background-color: #d1342fff;
+  border: 1.5px solid #d1342fff;
 }
 
 .recorded-note {
   position: absolute;
-  background-color: white;
+  background-color: #eeeeee;
   height: 1.475409836065574vh;
 }
 
@@ -119,7 +163,7 @@ p {
 
 .note-analysis {
   position: absolute;
-  background-color: green;
+  background-color: #3a4750;
 }
 
 .notes-elements {
