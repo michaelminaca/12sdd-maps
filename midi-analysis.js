@@ -1,3 +1,5 @@
+const analysisContainer = document.querySelector('.analysis');
+
 class Node {
   constructor(children, Note) {
     this.children = children;
@@ -31,6 +33,9 @@ const findArpeggios = function (notes) {
       i += 2;
     }
   }
+  arpeggios.forEach((arpeggio) =>
+    drawAnalysis(arpeggio, 'Arpeggio', notesContainer.children)
+  );
 };
 
 const findMotifs = function (notes) {
@@ -105,4 +110,48 @@ const findChords = function (notes) {
       i += 2;
     }
   }
+};
+
+const findDrawnNoteElements = function (analyseNotesIDs, drawnNotes) {
+  const correctDrawnNoteElements = [];
+  const drawnNotesArray = Array.from(drawnNotes);
+  analyseNotesIDs.forEach((noteID) => {
+    drawnNotesArray.forEach((drawnNote) => {
+      if (noteID == drawnNote.dataset.id)
+        correctDrawnNoteElements.push(drawnNote);
+    });
+  });
+  return correctDrawnNoteElements;
+};
+
+const findDimensionsOfAnalysisElement = function (analysisNoteElements) {
+  let curWidth = analysisNoteElements[0].style.width,
+    curHeight = analysisNoteElements[0].style.height,
+    curLeft = parseFloat(analysisNoteElements[0].style.left),
+    curTop = parseFloat(analysisNoteElements[0].style.top);
+  for (let i = 1; i < analysisNoteElements.length; i++) {
+    if (parseFloat(analysisNoteElements[i].style.top) < curTop)
+      curTop = parseFloat(analysisNoteElements[i].style.top);
+    if (parseFloat(analysisNoteElements[i].style.left) < curLeft)
+      curLeft = parseFloat(analysisNoteElements[i].style.left);
+  }
+  return ['10vw', '10vh', `${curLeft}vw`, `${curTop}vh`];
+};
+
+const drawAnalysis = function (analysisNotesID, title, drawnNotes) {
+  const analysisNoteElements = findDrawnNoteElements(
+    analysisNotesID,
+    drawnNotes
+  );
+  const dimensions = findDimensionsOfAnalysisElement(analysisNoteElements);
+  const html = document.createElement('div');
+  html.classList.add('note-analysis');
+  html.style.width = dimensions[0];
+  html.style.height = dimensions[1];
+  html.style.left = dimensions[2];
+  html.style.top = dimensions[3];
+  const text = document.createElement('p');
+  text.textContent = title;
+  html.appendChild(text);
+  analysisContainer.appendChild(html);
 };

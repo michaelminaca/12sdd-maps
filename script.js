@@ -4,6 +4,7 @@ const btnPlayPause = document.querySelector('.play-pause-btn');
 const btnRecord = document.querySelector('.record-btn');
 const playhead = document.querySelector('.playhead');
 const workspace = document.querySelector('.workspace');
+const notesContainer = document.querySelector('.notes-elements');
 
 const notes = [];
 const playbackQueue = [];
@@ -116,7 +117,7 @@ const drawNote = function (note) {
   htmlNote.style.width = `${(note.endTime - note.startTime) / UNITS_PER_VW}vw`;
   htmlNote.style.left = `${note.startTime / UNITS_PER_VW + 3}vw`;
   htmlNote.dataset.id = note.id;
-  workspace.appendChild(htmlNote);
+  notesContainer.appendChild(htmlNote);
 };
 
 const addNoteToArray = function (midiNoteData) {
