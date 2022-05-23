@@ -39,7 +39,7 @@ const findArpeggios = function (notes) {
 };
 
 const findMotifs = function (notes) {
-  const motifs = [];
+  let motifQueue;
   // const visitedNotes = [];
   for (let k = 0; k < notes.length; k++) {
     // if (visitedNotes.includes(notes[k].note)) {
@@ -54,6 +54,16 @@ const findMotifs = function (notes) {
       if (notes[i].note === notes[k].note) {
         current = root;
         if (counter >= 3) {
+          motifsQueue = [];
+          for (l = 0; l <= counter; l++) {
+            motifsQueue.push(k + l);
+          }
+          drawAnalysis(motifsQueue, 'Motif', notesContainer.children);
+          motifsQueue = [];
+          for (l = 0; l <= counter; l++) {
+            motifsQueue.push(i - l - 1);
+          }
+          drawAnalysis(motifsQueue, 'Motif', notesContainer.children);
           console.log(`motif found at index: ${k} to ${k + counter}`);
           console.log(`motif found at index: ${i - counter - 1} to ${i - 1}`);
           k += counter;
@@ -63,6 +73,16 @@ const findMotifs = function (notes) {
         !current.children.find((node) => node.Note.note === notes[i].note)
       ) {
         if (counter >= 3) {
+          motifsQueue = [];
+          for (l = 0; l <= counter; l++) {
+            motifsQueue.push(k + l);
+          }
+          drawAnalysis(motifsQueue, 'Motif', notesContainer.children);
+          motifsQueue = [];
+          for (l = 0; l <= counter; l++) {
+            motifsQueue.push(i - l - 1);
+          }
+          drawAnalysis(motifsQueue, 'Motif', notesContainer.children);
           console.log(`motif found at index: ${k} to ${k + counter}`);
           console.log(`motif found at index: ${i - counter - 1} to ${i - 1}`);
           k += counter;
@@ -82,6 +102,16 @@ const findMotifs = function (notes) {
       }
     }
     if (counter >= 3) {
+      motifsQueue = [];
+      for (l = 0; l <= counter; l++) {
+        motifsQueue.push(k + l);
+      }
+      drawAnalysis(motifsQueue, 'Motif', notesContainer.children);
+      motifsQueue = [];
+      for (l = 0; l <= counter; l++) {
+        motifsQueue.push(notes.length - l - 1);
+      }
+      drawAnalysis(motifsQueue, 'Motif', notesContainer.children);
       console.log(`motif found at index: ${k} to ${k + counter}`);
       console.log(
         `motif found at index: ${notes.length - counter - 1} to ${
