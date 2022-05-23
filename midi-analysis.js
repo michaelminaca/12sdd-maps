@@ -40,12 +40,12 @@ const findArpeggios = function (notes) {
 
 const findMotifs = function (notes) {
   const motifs = [];
-  const visitedNotes = [];
+  // const visitedNotes = [];
   for (let k = 0; k < notes.length; k++) {
-    if (visitedNotes.includes(notes[k].note)) {
-      continue;
-    }
-    visitedNotes.push(notes[k].note);
+    // if (visitedNotes.includes(notes[k].note)) {
+    //   continue;
+    // }
+    // visitedNotes.push(notes[k].note);
 
     const root = new Node([], notes[k]);
     let current = root;
@@ -54,6 +54,7 @@ const findMotifs = function (notes) {
       if (notes[i].note === notes[k].note) {
         current = root;
         if (counter >= 3) {
+          console.log(`motif found at index: ${k} to ${k + counter}`);
           console.log(`motif found at index: ${i - counter - 1} to ${i - 1}`);
           k += counter;
         }
@@ -62,6 +63,7 @@ const findMotifs = function (notes) {
         !current.children.find((node) => node.Note.note === notes[i].note)
       ) {
         if (counter >= 3) {
+          console.log(`motif found at index: ${k} to ${k + counter}`);
           console.log(`motif found at index: ${i - counter - 1} to ${i - 1}`);
           k += counter;
         }
@@ -80,6 +82,7 @@ const findMotifs = function (notes) {
       }
     }
     if (counter >= 3) {
+      console.log(`motif found at index: ${k} to ${k + counter}`);
       console.log(
         `motif found at index: ${notes.length - counter - 1} to ${
           notes.length - 1
@@ -108,6 +111,9 @@ const findChords = function (notes) {
         }`
       );
       i += 2;
+      chords.forEach((chord) =>
+        drawAnalysis(chord, 'Chord', notesContainer.children)
+      );
     }
   }
 };
@@ -150,7 +156,12 @@ const findDimensionsOfAnalysisElement = function (analysisNoteElements) {
   }
   highLeft = highLeft - curLeft;
   highTop = highTop + 90 / 61 - curTop;
-  return [`${highLeft}vw`, `${highTop}vh`, `${curLeft}vw`, `${curTop}vh`];
+  return [
+    `${highLeft + 2}vw`,
+    `${highTop + 2}vh`,
+    `${curLeft - 1}vw`,
+    `${curTop - 1}vh`,
+  ];
 };
 
 const drawAnalysis = function (analysisNotesID, title, drawnNotes) {
@@ -167,6 +178,7 @@ const drawAnalysis = function (analysisNotesID, title, drawnNotes) {
   html.style.top = dimensions[3];
   const text = document.createElement('p');
   text.textContent = title;
+  text.classList.add('analysis-text');
   html.appendChild(text);
   analysisContainer.appendChild(html);
 };
