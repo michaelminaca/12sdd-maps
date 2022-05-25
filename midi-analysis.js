@@ -9,6 +9,9 @@ class Node {
 }
 
 const analyseNotes = function (notes) {
+  while (analysisContainer.firstChild) {
+    analysisContainer.removeChild(analysisContainer.firstChild);
+  }
   findArpeggios(notes);
   findMotifs(notes);
   findChords(notes);
