@@ -5,6 +5,7 @@ const btnRecord = document.querySelector('.record-btn');
 const playhead = document.querySelector('.playhead');
 const workspace = document.querySelector('.workspace');
 const notesContainer = document.querySelector('.notes-elements');
+const welcomeMessage = document.querySelector('.welcome-message');
 
 const notes = [];
 const playbackQueue = [];
@@ -14,11 +15,12 @@ let playbackInterval = null;
 let id = 0;
 
 const WORKSPACE_WIDTH = 96;
-const TOTAL_UNITS = 1000;
+const TOTAL_UNITS = 2000;
 const MS_PER_UNIT = 10;
 const UNITS_PER_VW = TOTAL_UNITS / WORKSPACE_WIDTH;
 
 const AppState = {
+  isActive: false,
   isPlaying: false,
   isRecording: false,
 };
@@ -87,7 +89,7 @@ function updateMIDIDevices(midiAccess) {
 }
 
 const onMIDIMessage = function (event) {
-  if (event.data[1] >= 36 && event.data[1] <= 96) {
+  if (event.data[1] >= 36 && event.data[1] <= 96 && AppState.isActive) {
     toggleNote(event.data);
     if (AppState.isRecording) {
       addNoteToArray(event.data);
@@ -260,7 +262,7 @@ document.addEventListener('keydown', (event) => {
 });
 
 workspace.addEventListener('click', (event) => {
-  if (!AppState.isPlaying && !AppState.isRecording)
+  if (!AppState.isPlaying && !AppState.isRecording && AppState.isActive)
     setPlayheadPosition(event.clientX);
 });
 
@@ -275,5 +277,7 @@ btnRecord.addEventListener('click', () => {
 });
 
 document.querySelector('body').addEventListener('click', async () => {
+  welcomeMessage.style.display = 'none';
+  AppState.isActive = true;
   await Tone.start();
 });
