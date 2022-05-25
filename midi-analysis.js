@@ -1,9 +1,10 @@
 const analysisContainer = document.querySelector('.analysis');
 
 class Node {
-  constructor(children, Note) {
+  constructor(children, Note, index) {
     this.children = children;
     this.Note = Note;
+    this.index = index;
   }
 }
 
@@ -40,23 +41,24 @@ const findArpeggios = function (notes) {
 
 const findMotifs = function (notes) {
   let motifQueue;
-  // const visitedNotes = [];
+  const visitedNotes = [];
   for (let k = 0; k < notes.length; k++) {
-    // if (visitedNotes.includes(notes[k].note)) {
-    //   continue;
-    // }
-    // visitedNotes.push(notes[k].note);
+    console.log(k);
+    if (visitedNotes.includes(k)) {
+      continue;
+    }
+    visitedNotes.push(k);
 
-    const root = new Node([], notes[k]);
+    const root = new Node([], notes[k], k);
     let current = root;
-    counter = 0;
+    let counter = 0;
     for (let i = k + 1; i < notes.length; i++) {
       if (notes[i].note === notes[k].note) {
-        current = root;
         if (counter >= 3) {
           motifsQueue = [];
           for (l = 0; l <= counter; l++) {
-            motifsQueue.push(k + l);
+            motifsQueue.push(current.index - l);
+            visitedNotes.push(current.index - l);
           }
           drawAnalysis(motifsQueue, 'Motif', notesContainer.children);
           motifsQueue = [];
@@ -64,18 +66,24 @@ const findMotifs = function (notes) {
             motifsQueue.push(i - l - 1);
           }
           drawAnalysis(motifsQueue, 'Motif', notesContainer.children);
-          console.log(`motif found at index: ${k} to ${k + counter}`);
+          console.log(
+            `motif found at index: ${current.index - counter} to ${
+              current.index
+            }`
+          );
           console.log(`motif found at index: ${i - counter - 1} to ${i - 1}`);
-          k += counter;
         }
         counter = 0;
+        current = root;
       } else if (
-        !current.children.find((node) => node.Note.note === notes[i].note)
+        current.children.find((node) => node.Note.note === notes[i].note) ===
+        undefined
       ) {
         if (counter >= 3) {
           motifsQueue = [];
           for (l = 0; l <= counter; l++) {
-            motifsQueue.push(k + l);
+            motifsQueue.push(current.index - l);
+            visitedNotes.push(current.index - l);
           }
           drawAnalysis(motifsQueue, 'Motif', notesContainer.children);
           motifsQueue = [];
@@ -83,15 +91,19 @@ const findMotifs = function (notes) {
             motifsQueue.push(i - l - 1);
           }
           drawAnalysis(motifsQueue, 'Motif', notesContainer.children);
-          console.log(`motif found at index: ${k} to ${k + counter}`);
+          console.log(
+            `motif found at index: ${current.index - counter} to ${
+              current.index
+            }`
+          );
           console.log(`motif found at index: ${i - counter - 1} to ${i - 1}`);
-          k += counter;
         }
         counter = 0;
-        current.children.push(new Node([], notes[i]));
+        current.children.push(new Node([], notes[i], i));
         current = current.children[current.children.length - 1];
       } else if (
-        current.children.find((node) => node.Note.note === notes[i].note)
+        current.children.find((node) => node.Note.note === notes[i].note) !==
+        undefined
       ) {
         counter++;
         for (let j = 0; j < current.children.length; j++) {
@@ -104,7 +116,8 @@ const findMotifs = function (notes) {
     if (counter >= 3) {
       motifsQueue = [];
       for (l = 0; l <= counter; l++) {
-        motifsQueue.push(k + l);
+        motifsQueue.push(current.index - l);
+        visitedNotes.push(current.index - l);
       }
       drawAnalysis(motifsQueue, 'Motif', notesContainer.children);
       motifsQueue = [];
@@ -112,13 +125,14 @@ const findMotifs = function (notes) {
         motifsQueue.push(notes.length - l - 1);
       }
       drawAnalysis(motifsQueue, 'Motif', notesContainer.children);
-      console.log(`motif found at index: ${k} to ${k + counter}`);
+      console.log(
+        `motif found at index: ${current.index - counter} to ${current.index}`
+      );
       console.log(
         `motif found at index: ${notes.length - counter - 1} to ${
           notes.length - 1
         }`
       );
-      k += counter;
     }
   }
 };
@@ -168,7 +182,6 @@ const findDimensionsOfAnalysisElement = function (analysisNoteElements) {
     curLeft = parseFloat(analysisNoteElements[0].style.left),
     curTop = parseFloat(analysisNoteElements[0].style.top);
   for (let i = 1; i < analysisNoteElements.length; i++) {
-    console.log(highLeft);
     if (parseFloat(analysisNoteElements[i].style.top) < curTop)
       curTop = parseFloat(analysisNoteElements[i].style.top);
     if (parseFloat(analysisNoteElements[i].style.left) < curLeft)

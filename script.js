@@ -141,6 +141,7 @@ const addNoteToArray = function (midiNoteData) {
       }
     });
   }
+  analyseNotes(notes);
 };
 
 const setPlayheadPosition = function (mouseX) {
