@@ -220,8 +220,6 @@ const stopRecording = function () {
   AppState.isRecording = false;
   btnRecord.classList.remove('recording');
   stopMovingPlayhead();
-  analysisContainer.innerHTML = '';
-  analyseNotes(notes);
 };
 
 const playNote = function (note) {
