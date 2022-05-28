@@ -55,7 +55,7 @@ const findChords = function (notes) {
         counter++;
       } else {
         if (counter > 1) {
-          for (j = 0; j < counter; j++) {
+          for (j = 0; j <= counter; j++) {
             chord.push(notes[i - j].id);
           }
           drawAnalysis(chord, 'Chord', notesContainer.children);
