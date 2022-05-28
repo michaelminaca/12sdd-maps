@@ -13,25 +13,7 @@ const analyseNotes = function (notes) {
   findArpeggios(notes);
   findMotifs(notes);
   findChords(notes);
-};
-
-const findArpeggios2 = function (notes) {
-  let arpeggio = [];
-  for (let i = 0; i < notes.length - 2; i++) {
-    const isThird =
-      (Math.abs(notes[i + 1].note - notes[i].note) === 4 ||
-        Math.abs(notes[i + 1].note - notes[i].note) === 3) &&
-      Math.abs(notes[i + 1].startTime - notes[i].startTime) > 3;
-    const isFifth =
-      Math.abs(notes[i + 2].note - notes[i].note) == 7 &&
-      Math.abs(notes[i + 2].startTime - notes[i].startTime > 3);
-    if (isThird && isFifth) {
-      arpeggio.push(notes[i].id, notes[i + 1].id, notes[i + 2].id);
-      drawAnalysis(arpeggio, 'Arpeggio', notesContainer.children);
-      i += 2;
-      arpeggio = [];
-    }
-  }
+  findParallelMotion(notes);
 };
 
 const findArpeggios = function (notes) {
@@ -56,6 +38,83 @@ const findArpeggios = function (notes) {
           arpeggio = [];
         }
         counter = 0;
+      }
+    }
+  }
+};
+
+const findChords = function (notes) {
+  if (notes.length > 2) {
+    let chord = [];
+    let counter = 0;
+    for (let i = 0; i < notes.length; i++) {
+      if (
+        notes[i + 1] &&
+        Math.abs(notes[i].startTime - notes[i + 1].startTime) < 5
+      ) {
+        counter++;
+      } else {
+        if (counter > 1) {
+          for (j = 0; j < counter; j++) {
+            chord.push(notes[i - j].id);
+          }
+          drawAnalysis(chord, 'Chord', notesContainer.children);
+          chord = [];
+        }
+        counter = 0;
+      }
+    }
+  }
+};
+
+const findParallelMotion = function (notes) {
+  if (notes.length >= 6) {
+    for (i = 0; i < notes.length; i++) {
+      let parallelMotion = [];
+      let counter = 0;
+      let commonInterval = 0;
+      if (
+        notes[i + 3] &&
+        Math.abs(notes[i].startTime - notes[i + 1].startTime) < 5
+      ) {
+        commonInterval = Math.abs(notes[i].note - notes[i + 1].note);
+        for (j = 2; j < notes.length; j += 2) {
+          if (
+            notes[i + j + 1] &&
+            Math.abs(notes[i + j].startTime - notes[i + j + 1].startTime) < 5 &&
+            Math.abs(notes[i + j].note - notes[i + j + 1].note) ==
+              commonInterval
+          ) {
+            counter++;
+          } else {
+            if (counter > 2) {
+              for (let k = 0; k < counter * 2 + 2; k++) {
+                parallelMotion.push(notes[i + k].id);
+              }
+              drawAnalysis(
+                parallelMotion,
+                'Parallel Motion',
+                notesContainer.children
+              );
+              parallelMotion = [];
+              i += counter * 2;
+            }
+            counter = 0;
+          }
+        }
+        if (counter > 2) {
+          for (let k = 0; k < counter * 2 + 2; k++) {
+            parallelMotion.push(notes[i + k].id);
+          }
+          drawAnalysis(
+            parallelMotion,
+            'Parallel Motion',
+            notesContainer.children
+          );
+          parallelMotion = [];
+          i += counter * 2;
+          counter = 0;
+        }
       }
     }
   }
@@ -136,30 +195,6 @@ const findMotifs = function (notes) {
       }
       drawAnalysis(motifQueue, 'Motif', notesContainer.children);
       k += counter;
-    }
-  }
-};
-
-const findChords = function (notes) {
-  if (notes.length > 2) {
-    let chord = [];
-    let counter = 0;
-    for (let i = 0; i < notes.length; i++) {
-      if (
-        notes[i + 1] &&
-        Math.abs(notes[i].startTime - notes[i + 1].startTime) < 5
-      ) {
-        counter++;
-      } else {
-        if (counter > 1) {
-          for (j = 0; j < counter; j++) {
-            chord.push(notes[i - j].id);
-          }
-          drawAnalysis(chord, 'Chord', notesContainer.children);
-          chord = [];
-        }
-        counter = 0;
-      }
     }
   }
 };
