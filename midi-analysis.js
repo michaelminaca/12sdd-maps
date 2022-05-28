@@ -15,7 +15,7 @@ const analyseNotes = function (notes) {
   findChords(notes);
 };
 
-const findArpeggios = function (notes) {
+const findArpeggios2 = function (notes) {
   let arpeggio = [];
   for (let i = 0; i < notes.length - 2; i++) {
     const isThird =
@@ -30,6 +30,33 @@ const findArpeggios = function (notes) {
       drawAnalysis(arpeggio, 'Arpeggio', notesContainer.children);
       i += 2;
       arpeggio = [];
+    }
+  }
+};
+
+const findArpeggios = function (notes) {
+  if (notes.length > 2) {
+    let arpeggio = [];
+    let counter = 0;
+    for (let i = 0; i < notes.length; i++) {
+      if (
+        notes[i + 1] &&
+        Math.abs(notes[i].startTime - notes[i + 1].startTime) >= 5 &&
+        (Math.abs(notes[i + 1].note - notes[i].note) === 4 ||
+          Math.abs(notes[i + 1].note - notes[i].note) === 3 ||
+          Math.abs(notes[i + 1].note - notes[i].note) == 7)
+      ) {
+        counter++;
+      } else {
+        if (counter > 1) {
+          for (j = 0; j <= counter; j++) {
+            arpeggio.push(notes[i - j].id);
+          }
+          drawAnalysis(arpeggio, 'Arpeggio', notesContainer.children);
+          arpeggio = [];
+        }
+        counter = 0;
+      }
     }
   }
 };
