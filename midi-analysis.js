@@ -59,6 +59,7 @@ const findMotifs = function (notes) {
             motifQueue.push(notes[i - l - 1].id);
           }
           drawAnalysis(motifQueue, 'Motif', notesContainer.children);
+          k += counter;
         }
         counter = 0;
         current = root;
@@ -78,6 +79,7 @@ const findMotifs = function (notes) {
             motifQueue.push(notes[i - l - 1].id);
           }
           drawAnalysis(motifQueue, 'Motif', notesContainer.children);
+          k += counter;
         }
         counter = 0;
         current.children.push(new Node([], notes[i], i));
@@ -106,26 +108,31 @@ const findMotifs = function (notes) {
         motifQueue.push(notes[notes.length - l - 1].id);
       }
       drawAnalysis(motifQueue, 'Motif', notesContainer.children);
+      k += counter;
     }
   }
 };
 
 const findChords = function (notes) {
-  const chords = [];
-  for (let i = 0; i < notes.length - 2; i++) {
-    const isThird =
-      (Math.abs(notes[i + 1].note - notes[i].note) === 4 ||
-        Math.abs(notes[i + 1].note - notes[i].note) === 3) &&
-      Math.abs(notes[i + 1].startTime - notes[i].startTime) < 3;
-    const isFifth =
-      Math.abs(notes[i + 2].note - notes[i].note) == 7 &&
-      Math.abs(notes[i + 2].startTime - notes[i].startTime < 3);
-    if (isThird && isFifth) {
-      chords.push([i, i + 1, i + 2]);
-      i += 2;
-      chords.forEach((chord) =>
-        drawAnalysis(chord, 'Chord', notesContainer.children)
-      );
+  if (notes.length > 2) {
+    let chord = [];
+    let counter = 0;
+    for (let i = 0; i < notes.length; i++) {
+      if (
+        notes[i + 1] &&
+        Math.abs(notes[i].startTime - notes[i + 1].startTime) < 5
+      ) {
+        counter++;
+      } else {
+        if (counter > 1) {
+          for (j = 0; j < counter; j++) {
+            chord.push(notes[i - j].id);
+          }
+          drawAnalysis(chord, 'Chord', notesContainer.children);
+          chord = [];
+        }
+        counter = 0;
+      }
     }
   }
 };
