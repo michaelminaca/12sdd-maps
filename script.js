@@ -123,18 +123,26 @@ const drawNote = function (note) {
 };
 
 const addNoteToArray = function (midiNoteData) {
-  if (midiNoteData[0] === 144) {
-    notes.push(new Note(midiNoteData[1], midiNoteData[2], playheadPos));
-    notes[notes.length - 1].id = id;
-    id++;
-    notes.sort((a, b) => {
-      if (a.startTime < b.startTime) return -1;
-      if (a.startTime > b.startTime) return 1;
-      return 0;
-    });
-    return;
+  if (midiNoteData[0] === 144 && midiNoteData[2] > 0) {
+    if (playheadPos >= notes[notes.length - 1]) {
+      notes.push(new Note(midiNoteData[1], midiNoteData[2], playheadPos));
+      notes[notes.length - 1].id = id;
+      id++;
+    } else if (playheadPos <= notes[0]) {
+      notes.unshift(new Note(midiNoteData[1], midiNoteData[2], playheadPos));
+      notes[0].id = id;
+      id++;
+    } else {
+      notes.splice(
+        findNotePosition(notes, playheadPos),
+        0,
+        new Note(midiNoteData[1], midiNoteData[2], playheadPos)
+      );
+      notes[findNotePosition(notes, playheadPos)].id = id;
+      id++;
+    }
   }
-  if (midiNoteData[0] === 128) {
+  if (midiNoteData[0] === 128 || midiNoteData[2] == 0) {
     notes.forEach((note) => {
       if (note.note === midiNoteData[1] && note.endTime == null) {
         note.endTime = playheadPos;
@@ -144,6 +152,22 @@ const addNoteToArray = function (midiNoteData) {
     });
   }
   analyseNotes(notes);
+};
+
+const findNotePosition = function (array, target) {
+  let lowerBound = 0;
+  let upperBound = notes.length - 1;
+  while (lowerBound <= upperBound) {
+    let mid = Math.floor((lowerBound + upperBound) / 2);
+    if (array[mid].startTime === target) {
+      return mid;
+    } else if (array[mid].startTime > target) {
+      upperBound = mid - 1;
+    } else {
+      lowerBound = mid + 1;
+    }
+  }
+  return lowerBound;
 };
 
 const setPlayheadPosition = function (mouseX) {
