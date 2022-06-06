@@ -8,7 +8,7 @@ class Node {
   }
 }
 
-const analyseNotes = function (notes) {
+const analyseNotes = function () {
   analysisContainer.innerHTML = '';
   findArpeggios(notes);
   findMotifs(notes);
@@ -16,7 +16,7 @@ const analyseNotes = function (notes) {
   findParallelMotion(notes);
 };
 
-const findArpeggios = function (notes) {
+const findArpeggios = function () {
   if (notes.length > 2) {
     let arpeggio = [];
     let counter = 0;
@@ -28,9 +28,11 @@ const findArpeggios = function (notes) {
           Math.abs(notes[i + 1].note - notes[i].note) === 3 ||
           Math.abs(notes[i + 1].note - notes[i].note) == 7)
       ) {
+        //If the next note is apart of the same chord (minor/major 3, 5th) and if the next note is played more than 50ms later
         counter++;
       } else {
         if (counter > 1) {
+          //If three notes or more are part of the arpeggio
           for (j = 0; j <= counter; j++) {
             arpeggio.push(notes[i - j].id);
           }
@@ -43,14 +45,14 @@ const findArpeggios = function (notes) {
   }
 };
 
-const findChords = function (notes) {
+const findChords = function () {
   if (notes.length > 2) {
     let chord = [];
     let counter = 0;
     for (let i = 0; i < notes.length; i++) {
       if (
         notes[i + 1] &&
-        Math.abs(notes[i].startTime - notes[i + 1].startTime) < 5
+        Math.abs(notes[i].startTime - notes[i + 1].startTime) < 3
       ) {
         counter++;
       } else {
@@ -67,7 +69,7 @@ const findChords = function (notes) {
   }
 };
 
-const findParallelMotion = function (notes) {
+const findParallelMotion = function () {
   if (notes.length >= 6) {
     for (i = 0; i < notes.length; i++) {
       let parallelMotion = [];
@@ -85,6 +87,7 @@ const findParallelMotion = function (notes) {
             Math.abs(notes[i + j].note - notes[i + j + 1].note) ==
               commonInterval
           ) {
+            //if the next note exists and the current and next notes are closer than 50ms apart and the absolute value of the diffrence is equal to the commen interval
             counter++;
           } else {
             if (counter > 2) {
@@ -120,7 +123,7 @@ const findParallelMotion = function (notes) {
   }
 };
 
-const findMotifs = function (notes) {
+const findMotifs = function () {
   let motifQueue = [];
   const visitedNotes = [];
   for (let k = 0; k < notes.length; k++) {
@@ -153,6 +156,7 @@ const findMotifs = function (notes) {
         current.children.find((node) => node.Note.note === notes[i].note) ===
         undefined
       ) {
+        //if the current.children array does note contain the next note
         if (counter >= 3) {
           motifQueue = [];
           for (l = 0; l <= counter; l++) {
@@ -174,6 +178,7 @@ const findMotifs = function (notes) {
         current.children.find((node) => node.Note.note === notes[i].note) !==
         undefined
       ) {
+        //if the current.children array does contain the next note
         counter++;
         for (let j = 0; j < current.children.length; j++) {
           if (current.children[j].Note.note === notes[i].note) {

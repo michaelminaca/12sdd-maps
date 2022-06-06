@@ -170,16 +170,6 @@ const findNotePosition = function (array, target) {
   return lowerBound;
 };
 
-//DRIVER CODE
-for (let i = 0; i < 1000; i++) {
-  addNoteToArray([
-    144,
-    Math.floor(Math.random() * 100) + 1,
-    Math.floor(Math.random() * 100) + 1,
-  ]);
-  console.log(notes);
-}
-
 const setPlayheadPosition = function (mouseX) {
   playheadPos = calcPlayheadPosition(mouseX);
   playhead.style.transform = `translateX(${playheadPos / UNITS_PER_VW}vw)`;
